@@ -20,6 +20,10 @@ public class UserController {
         return userService.updateUserById(id,dtoUserRequest);
     }
 
+    @DeleteMapping(path = "delete/{id}")
+    public DtoUser deleteUserById(@PathVariable int id) {
+        return userService.deleteUserById(id);
+    }
     @PostMapping(path = "/add")
     public DtoUser addUser(DtoUserRequest dtoUserRequest){
         return userService.addUser(dtoUserRequest);

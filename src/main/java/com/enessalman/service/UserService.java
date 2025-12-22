@@ -15,26 +15,38 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
-    public DtoUser updateUserById(int id ,DtoUserRequest dtoUserRequest) {
+    public DtoUser updateUserById(int id, DtoUserRequest dtoUserRequest) {
         DtoUser dtoUser = new DtoUser();
         Optional<User> optional = userRepository.findById(id);
-        if (optional.isPresent()){
+        if (optional.isPresent()) {
             User dbuser = optional.get();
             dbuser.setUsername(dtoUserRequest.getUsername());
             dbuser.setPassword(dtoUserRequest.getPassword());
             userRepository.save(dbuser);
-            BeanUtils.copyProperties(dbuser,dtoUser);
+            BeanUtils.copyProperties(dbuser, dtoUser);
         }
-        return  dtoUser;
+        return dtoUser;
 
 
     }
+
     public DtoUser addUser(DtoUserRequest dtoUserRequest) {
         DtoUser dtoUser = new DtoUser();
         User user = new User();
-        BeanUtils.copyProperties(dtoUserRequest,user);
+        BeanUtils.copyProperties(dtoUserRequest, user);
         User dbUser = userRepository.save(user);
-        BeanUtils.copyProperties(dbUser,dtoUser);
+        BeanUtils.copyProperties(dbUser, dtoUser);
+        return dtoUser;
+    }
+
+    public DtoUser deleteUserById(int id) {
+        DtoUser dtoUser = new DtoUser();
+        Optional<User> optional = userRepository.findById(id);
+        if (optional.isPresent()) {
+            User dbuser = optional.get();
+            userRepository.deleteById(id);
+            BeanUtils.copyProperties(dbuser, dtoUser);
+        }
         return dtoUser;
     }
 }
