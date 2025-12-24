@@ -3,6 +3,7 @@ package com.enessalman.service;
 import com.enessalman.dto.DtoGoal;
 import com.enessalman.dto.DtoGoalRequest;
 import com.enessalman.entities.Goal;
+import com.enessalman.entities.Status;
 import com.enessalman.entities.User;
 import com.enessalman.repository.GoalRepository;
 import com.enessalman.repository.UserRepository;
@@ -50,6 +51,7 @@ public class GoalService {
             dbGoal.setGoal(request.getGoal());
             dbGoal.setEndAt(request.getEndAt());
             dbGoal.setPriority(request.getPriority());
+            dbGoal.setStatus(request.getStatus());
             goalRepository.save(dbGoal);
             BeanUtils.copyProperties(dbGoal,dtoGoal);
         }

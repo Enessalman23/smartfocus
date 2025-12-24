@@ -1,5 +1,7 @@
 package com.enessalman.dto;
 
+import com.enessalman.entities.Priority;
+import com.enessalman.entities.Status;
 import com.enessalman.entities.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,8 +17,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class DtoGoal {
     private String goal;
-    private String status;
-    private  int priority;
+    private Status status;
+    private Priority priority;
     private LocalDate endAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

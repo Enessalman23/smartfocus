@@ -28,10 +28,14 @@ public class Goal {
 
     @Column(name = "goal",nullable = false)
     private String goal;
+
     @Column(name = "status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
     @Column(name = "priority")
-    private int priority;
+    @Enumerated(EnumType.STRING)
+    private Priority priority;
 
     @Column(nullable = false)
     @JsonFormat(pattern = "dd-MM-yyyy")
