@@ -5,10 +5,13 @@ import com.enessalman.dto.DtoGoalRequest;
 import com.enessalman.entities.Goal;
 import com.enessalman.entities.Status;
 import com.enessalman.entities.User;
+import com.enessalman.mapper.IGoalMapper;
 import com.enessalman.repository.GoalRepository;
 import com.enessalman.repository.UserRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,45 +19,46 @@ import java.util.Optional;
 @Service
 public class GoalService {
     @Autowired
-    GoalRepository goalRepository;
-    @Autowired
-    UserRepository userRepository;
+    public GoalService(GoalRepository goalRepository, UserRepository userRepository, IGoalMapper goalMapper) {
+        this.goalRepository = goalRepository;
+        this.userRepository = userRepository;
+        this.goalMapper = goalMapper;
+    }
+    private  final  IGoalMapper goalMapper;
+    private final GoalRepository goalRepository;
+    private final UserRepository userRepository;
 
-
-    public DtoGoal addGoal(DtoGoalRequest request){
+    public Page<Goal> pagination(int offset, int pagesize) {
+        Pageable pageable = PageRequest.of(offset, pagesize);
+        return goalRepository.findAll(pageable);
+    }
+    public DtoGoal addGoal(DtoGoalRequest request) {
         User user = userRepository.getReferenceById(request.getUserId());
-        DtoGoal dtoGoal = new DtoGoal();
-        Goal goal = new Goal();
-        BeanUtils.copyProperties(request,goal);
+        Goal goal = goalMapper.toEntity(request);
+        if (goal.getStatus() == null) {
+            goal.setStatus(Status.PENDING);
+        }
         goal.setUser(user);
         Goal dbGoal = goalRepository.save(goal);
-        BeanUtils.copyProperties(dbGoal,dtoGoal);
-        return dtoGoal;
+        return goalMapper.toDto(dbGoal);
     }
 
-    public DtoGoal deleteGoalById(int id){
-        Optional<Goal> optional = goalRepository.findById(id);
-       DtoGoal dtoGoal = new DtoGoal();
-        if (optional.isPresent()){
-           Goal dbGoal = optional.get();
-            goalRepository.delete(dbGoal);
-            BeanUtils.copyProperties(dbGoal,dtoGoal);
-        }
-        return dtoGoal;
+    public void deleteGoalById(int id) {
+        userRepository.deleteById(id);
     }
 
-    public DtoGoal updateGoal(int id,DtoGoalRequest request){
+    public DtoGoal updateGoal(int id, DtoGoalRequest request) {
         Optional<Goal> optional = goalRepository.findById(id);
-        DtoGoal dtoGoal = new DtoGoal();
-        if (optional.isPresent()){
+
+        if (optional.isPresent()) {
             Goal dbGoal = optional.get();
             dbGoal.setGoal(request.getGoal());
             dbGoal.setEndAt(request.getEndAt());
             dbGoal.setPriority(request.getPriority());
             dbGoal.setStatus(request.getStatus());
-            goalRepository.save(dbGoal);
-            BeanUtils.copyProperties(dbGoal,dtoGoal);
+            Goal updatedGoal =  goalRepository.save(dbGoal);
+            return goalMapper.toDto(updatedGoal);
         }
-        return dtoGoal;
+        return null;
     }
 }

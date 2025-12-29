@@ -3,6 +3,7 @@ package com.enessalman.entities;
 import com.enessalman.dto.DtoGoalRequest;
 import com.enessalman.dto.DtoUser;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
