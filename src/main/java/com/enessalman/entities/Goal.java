@@ -1,9 +1,6 @@
 package com.enessalman.entities;
 
-import com.enessalman.dto.DtoGoalRequest;
-import com.enessalman.dto.DtoUser;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,7 +24,7 @@ public class Goal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "goal",nullable = false)
+    @Column(name = "goal", nullable = false)
     private String goal;
 
     @Column(name = "status")
@@ -41,16 +38,17 @@ public class Goal {
     @Column(nullable = false)
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate endAt;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
     @LastModifiedDate
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }
 

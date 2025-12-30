@@ -14,8 +14,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaAuditing
 public class SmartfocusApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SmartfocusApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SmartfocusApplication.class, args);
+    }
 
 }

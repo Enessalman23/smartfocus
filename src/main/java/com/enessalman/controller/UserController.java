@@ -3,11 +3,8 @@ package com.enessalman.controller;
 
 import com.enessalman.dto.DtoUser;
 import com.enessalman.dto.DtoUserRequest;
-import com.enessalman.entities.User;
 import com.enessalman.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,8 +22,6 @@ public class UserController {
     }
 
 
-
-
     @PutMapping(path = "/{id}")
     public ResponseEntity<DtoUser> updateUserById(@PathVariable int id, @RequestBody DtoUserRequest dtoUserRequest) {
         DtoUser updatedUser = userService.updateUserById(id, dtoUserRequest);
@@ -40,8 +35,8 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<DtoUser>  addUser(@RequestBody DtoUserRequest dtoUserRequest) {
-        DtoUser savedUser =userService.addUser(dtoUserRequest);
+    public ResponseEntity<DtoUser> addUser(@RequestBody DtoUserRequest dtoUserRequest) {
+        DtoUser savedUser = userService.addUser(dtoUserRequest);
         return ResponseEntity.ok().body(savedUser);
     }
 

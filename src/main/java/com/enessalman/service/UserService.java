@@ -28,10 +28,10 @@ public class UserService {
             User dbuser = optional.get();
             dbuser.setUsername(dtoUserRequest.getUsername());
             dbuser.setPassword(dtoUserRequest.getPassword());
-           User updatedUser = userRepository.save(dbuser);
+            User updatedUser = userRepository.save(dbuser);
             return userMapper.toDto(updatedUser);
         }
-       return null;
+        return null;
     }
 
     public DtoUser addUser(DtoUserRequest dtoUserRequest) {

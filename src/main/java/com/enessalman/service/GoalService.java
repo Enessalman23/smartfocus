@@ -24,7 +24,8 @@ public class GoalService {
         this.userRepository = userRepository;
         this.goalMapper = goalMapper;
     }
-    private  final  IGoalMapper goalMapper;
+
+    private final IGoalMapper goalMapper;
     private final GoalRepository goalRepository;
     private final UserRepository userRepository;
 
@@ -32,6 +33,7 @@ public class GoalService {
         Pageable pageable = PageRequest.of(offset, pagesize);
         return goalRepository.findAll(pageable);
     }
+
     public DtoGoal addGoal(DtoGoalRequest request) {
         User user = userRepository.getReferenceById(request.getUserId());
         Goal goal = goalMapper.toEntity(request);
@@ -56,7 +58,7 @@ public class GoalService {
             dbGoal.setEndAt(request.getEndAt());
             dbGoal.setPriority(request.getPriority());
             dbGoal.setStatus(request.getStatus());
-            Goal updatedGoal =  goalRepository.save(dbGoal);
+            Goal updatedGoal = goalRepository.save(dbGoal);
             return goalMapper.toDto(updatedGoal);
         }
         return null;

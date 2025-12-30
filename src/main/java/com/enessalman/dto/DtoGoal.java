@@ -2,7 +2,6 @@ package com.enessalman.dto;
 
 import com.enessalman.entities.Priority;
 import com.enessalman.entities.Status;
-import com.enessalman.entities.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

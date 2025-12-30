@@ -14,6 +14,7 @@ public interface IGoalMapper {
     DtoGoal toDto(Goal goal);
 
     // DtoGoalRequest -> Goal Entity (Kaydetme için)
-    @Mapping(target = "user", ignore = true)  // Request -> Entity (UserId alanı eşlenirken ignore edilebilir veya servis katmanında setlenebilir)
+    @Mapping(target = "user", ignore = true)
+    // Request -> Entity (UserId alanı eşlenirken ignore edilebilir veya servis katmanında setlenebilir)
     Goal toEntity(DtoGoalRequest dtoGoalRequest);
 }
