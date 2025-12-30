@@ -4,7 +4,6 @@ package com.enessalman.controller;
 import com.enessalman.dto.DtoUser;
 import com.enessalman.dto.DtoUserRequest;
 import com.enessalman.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,15 +11,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "/rest/api/user")
 public class UserController {
 
-
     private final UserService userService;
 
     //constructor dependency injection
-    @Autowired //eğer tek parametreliyse autowireda gerek yok
     public UserController(UserService userService) {
         this.userService = userService;
     }
-
 
     @PutMapping(path = "/{id}")
     public ResponseEntity<DtoUser> updateUserById(@PathVariable int id, @RequestBody DtoUserRequest dtoUserRequest) {

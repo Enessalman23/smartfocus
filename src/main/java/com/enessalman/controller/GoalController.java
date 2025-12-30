@@ -5,7 +5,6 @@ import com.enessalman.dto.DtoGoal;
 import com.enessalman.dto.DtoGoalRequest;
 import com.enessalman.entities.Goal;
 import com.enessalman.service.GoalService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,17 +15,15 @@ public class GoalController {
 
     private final GoalService goalService;
 
-    @Autowired
     public GoalController(GoalService goalService) {
         this.goalService = goalService;
     }
 
-
-    @PostMapping(path = "/add")
+    @PostMapping
     public ResponseEntity<DtoGoal> addGoal(@RequestBody DtoGoalRequest request) {
 
         DtoGoal saveGoal = goalService.addGoal(request);
-        return ResponseEntity.ok(saveGoal);
+        return ResponseEntity.ok(saveGoal); //TODO: 201 dönsün CREATED
     }
 
     @DeleteMapping(path = "/{id}")
@@ -43,8 +40,16 @@ public class GoalController {
         return ResponseEntity.ok().body(updateGoal);
     }
 
-    @GetMapping(path = "/pagination")
-    public ResponseEntity<Page<Goal>> pagination(@RequestParam int offset, @RequestParam int pagesize) {
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<Page<Goal>> getById(@PathVariable int id) {
+        //return ResponseEntity.ok(goalService.getById(id));
+        //TODO: implement remain parts
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(path = "/filter")
+    //TODO: bu şu an pagination api si olmuş gerçek bir filter apisine çevir
+    public ResponseEntity<Page<Goal>> pagination(@RequestParam(defaultValue = "10") int pagesize, @RequestParam(defaultValue = "0") int offset) {
         return ResponseEntity.ok(goalService.pagination(offset, pagesize));
     }
 }
