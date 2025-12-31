@@ -5,7 +5,9 @@ import com.enessalman.dto.DtoGoal;
 import com.enessalman.dto.DtoGoalRequest;
 import com.enessalman.entities.Goal;
 import com.enessalman.service.GoalService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,10 +22,10 @@ public class GoalController {
     }
 
     @PostMapping
-    public ResponseEntity<DtoGoal> addGoal(@RequestBody DtoGoalRequest request) {
+    public ResponseEntity<DtoGoal> addGoal(@Valid @RequestBody DtoGoalRequest request) {
 
         DtoGoal saveGoal = goalService.addGoal(request);
-        return ResponseEntity.ok(saveGoal); //TODO: 201 dönsün CREATED
+        return ResponseEntity.status(HttpStatus.CREATED).body(saveGoal); //TODO: 201 dönsün CREATED
     }
 
     @DeleteMapping(path = "/{id}")
@@ -34,7 +36,7 @@ public class GoalController {
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<DtoGoal> updateGoal(@PathVariable int id, @RequestBody DtoGoalRequest request) {
+    public ResponseEntity<DtoGoal> updateGoal(@PathVariable int id, @Valid @RequestBody DtoGoalRequest request) {
 
         DtoGoal updateGoal = goalService.updateGoal(id, request);
         return ResponseEntity.ok().body(updateGoal);
