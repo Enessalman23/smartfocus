@@ -8,6 +8,8 @@ import com.enessalman.entities.User;
 import com.enessalman.mapper.IGoalMapper;
 import com.enessalman.repository.GoalRepository;
 import com.enessalman.repository.UserRepository;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class GoalService {
     @Autowired
     public GoalService(GoalRepository goalRepository, UserRepository userRepository, IGoalMapper goalMapper) {
@@ -35,31 +38,50 @@ public class GoalService {
     }
 
     public DtoGoal addGoal(DtoGoalRequest request) {
-        User user = userRepository.getReferenceById(request.getUserId());
-        Goal goal = goalMapper.toEntity(request);
-        if (goal.getStatus() == null) {
-            goal.setStatus(Status.PENDING);
+        log.info("Hedef Ekleme isteği geldi. Hedef: {}",request.getGoal());
+        try {
+            User user = userRepository.getReferenceById(request.getUserId());
+            Goal goal = goalMapper.toEntity(request);
+            if (goal.getStatus() == null) {
+                goal.setStatus(Status.PENDING);
+            }
+            goal.setUser(user);
+            Goal dbGoal = goalRepository.save(goal);
+            log.info("Hedef Eklendi. Hedef {}",dbGoal.getGoal());
+            return goalMapper.toDto(dbGoal);
+        } catch (Exception e) {
+            log.error("Hedef Eklenemedi. Mesaj: {}",e.getMessage());
         }
-        goal.setUser(user);
-        Goal dbGoal = goalRepository.save(goal);
-        return goalMapper.toDto(dbGoal);
+      return  null;
     }
 
     public void deleteGoalById(int id) {
+        log.info("Hedef Silme isteği geldi. ID: {}",id);
+        try {
         userRepository.deleteById(id);
+        log.info("Hedef Başarıyla Silindi. ID: {}",id);
+    }catch (Exception e){
+        log.error("Hedef Silinemedi. Mesaj: {}",e.getMessage());
+        throw e;
+    }
     }
 
     public DtoGoal updateGoal(int id, DtoGoalRequest request) {
-        Optional<Goal> optional = goalRepository.findById(id);
-
-        if (optional.isPresent()) {
-            Goal dbGoal = optional.get();
-            dbGoal.setGoal(request.getGoal());
-            dbGoal.setEndAt(request.getEndAt());
-            dbGoal.setPriority(request.getPriority());
-            dbGoal.setStatus(request.getStatus());
-            Goal updatedGoal = goalRepository.save(dbGoal);
-            return goalMapper.toDto(updatedGoal);
+        log.info("Hedef Güncelleme isteği geldi. ID: {}",request.getUserId());
+        try {
+            Optional<Goal> optional = goalRepository.findById(id);
+            if (optional.isPresent()) {
+                Goal dbGoal = optional.get();
+                dbGoal.setGoal(request.getGoal());
+                dbGoal.setEndAt(request.getEndAt());
+                dbGoal.setPriority(request.getPriority());
+                dbGoal.setStatus(request.getStatus());
+                Goal updatedGoal = goalRepository.save(dbGoal);
+                log.info("Hedef güncellendi. ID: {}",updatedGoal.getId());
+                return goalMapper.toDto(updatedGoal);
+            }
+        } catch (Exception e) {
+            log.error("Hedef güncellenemedi. Mesaj: {}",e.getMessage());
         }
         return null;
     }
