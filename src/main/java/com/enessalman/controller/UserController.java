@@ -19,6 +19,12 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<DtoUser> getUserById(@PathVariable int id){
+        DtoUser getUser = userService.getUserById(id);
+        return ResponseEntity.ok().body(getUser);
+    }
+
     @PutMapping(path = "/{id}")
     public ResponseEntity<DtoUser> updateUserById(@PathVariable int id, @Valid @RequestBody DtoUserRequest dtoUserRequest) {
         DtoUser updatedUser = userService.updateUserById(id, dtoUserRequest);

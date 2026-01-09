@@ -21,6 +21,11 @@ public class GoalController {
         this.goalService = goalService;
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<DtoGoal> getGoalById(@PathVariable int id){
+        goalService.getGoalById(id);
+        return ResponseEntity.ok().build();
+    }
     @PostMapping
     public ResponseEntity<DtoGoal> addGoal(@Valid @RequestBody DtoGoalRequest request) {
 

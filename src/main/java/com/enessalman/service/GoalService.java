@@ -8,9 +8,11 @@ import com.enessalman.entities.User;
 import com.enessalman.mapper.IGoalMapper;
 import com.enessalman.repository.GoalRepository;
 import com.enessalman.repository.UserRepository;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,9 +38,14 @@ public class GoalService {
         Pageable pageable = PageRequest.of(offset, pagesize);
         return goalRepository.findAll(pageable);
     }
-
+    @Cacheable(value = "goals", key = "#id")
+    public DtoGoal getGoalById(int id) {
+        log.info("DB'den veri çekiliyor: {}", id);
+        Goal goal = goalRepository.getReferenceById(id);
+        return goalMapper.toDto(goal);
+    }
     public DtoGoal addGoal(DtoGoalRequest request) {
-        log.info("Hedef Ekleme isteği geldi. Hedef: {}",request.getGoal());
+        log.info("Hedef Ekleme isteği geldi. Hedef: {}", request.getGoal());
         try {
             User user = userRepository.getReferenceById(request.getUserId());
             Goal goal = goalMapper.toEntity(request);
@@ -47,27 +54,29 @@ public class GoalService {
             }
             goal.setUser(user);
             Goal dbGoal = goalRepository.save(goal);
-            log.info("Hedef Eklendi. Hedef {}",dbGoal.getGoal());
+            log.info("Hedef Eklendi. Hedef {}", dbGoal.getGoal());
             return goalMapper.toDto(dbGoal);
         } catch (Exception e) {
-            log.error("Hedef Eklenemedi. Mesaj: {}",e.getMessage());
+            log.error("Hedef Eklenemedi. Mesaj: {}", e.getMessage());
         }
-      return  null;
+        return null;
     }
 
+    @CacheEvict(value = "goals",key = "#id") //sadece bu idyi temizler.
     public void deleteGoalById(int id) {
-        log.info("Hedef Silme isteği geldi. ID: {}",id);
+        log.info("Hedef Silme isteği geldi. ID: {}", id);
         try {
-        userRepository.deleteById(id);
-        log.info("Hedef Başarıyla Silindi. ID: {}",id);
-    }catch (Exception e){
-        log.error("Hedef Silinemedi. Mesaj: {}",e.getMessage());
-        throw e;
-    }
+            goalRepository.deleteById(id);
+            log.info("Hedef Başarıyla Silindi. ID: {}", id);
+        } catch (Exception e) {
+            log.error("Hedef Silinemedi. Mesaj: {}", e.getMessage());
+            throw e;
+        }
     }
 
+    @CachePut(value = "goals",key = "#id") //cache i de günceller
     public DtoGoal updateGoal(int id, DtoGoalRequest request) {
-        log.info("Hedef Güncelleme isteği geldi. ID: {}",request.getUserId());
+        log.info("Hedef Güncelleme isteği geldi. ID: {}", request.getUserId());
         try {
             Optional<Goal> optional = goalRepository.findById(id);
             if (optional.isPresent()) {
@@ -77,11 +86,11 @@ public class GoalService {
                 dbGoal.setPriority(request.getPriority());
                 dbGoal.setStatus(request.getStatus());
                 Goal updatedGoal = goalRepository.save(dbGoal);
-                log.info("Hedef güncellendi. ID: {}",updatedGoal.getId());
+                log.info("Hedef güncellendi. ID: {}", updatedGoal.getId());
                 return goalMapper.toDto(updatedGoal);
             }
         } catch (Exception e) {
-            log.error("Hedef güncellenemedi. Mesaj: {}",e.getMessage());
+            log.error("Hedef güncellenemedi. Mesaj: {}", e.getMessage());
         }
         return null;
     }
